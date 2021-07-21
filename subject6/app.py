@@ -1,7 +1,7 @@
 from random import randint
 
 from faker import Faker
-from flask import Flask, request
+from flask import Flask, request, make_response
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -20,9 +20,13 @@ limiter = Limiter(app, key_func=get_remote_address)
 @app.route("/")
 def listing():
     links = ''.join(f'<li><a href="/page/{pid}">{pid}</a></li>' for pid in companies.keys())
-    return "<html><body><ul>" + \
+
+    resp = make_response("<html><body><ul>" + \
         links + \
-        "</ul></body></html>"
+        "</ul></body></html>")
+
+    resp.set_cookie("CSRF-Token", value="XYZ")
+    return resp, 200
 
 
 @app.route("/page/<pid>")
@@ -44,4 +48,6 @@ def page_detail(pid):
         if randint(1, 10) == 1:
             return "server down", 503
         else:
-            return f'<html><body><p id="company-id">{pid}</p><p id="company-name">{company_name}</p></body></html>', 200
+            resp = make_response(f'<html><body><p id="company-id">{pid}</p><p id="company-name">{company_name}</p></body></html>')
+            resp.set_cookie("CSRF-Token", value="XYZ")
+            return resp, 200
