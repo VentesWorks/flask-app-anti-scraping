@@ -34,11 +34,14 @@ def page_detail(pid):
         return "bot is not allowed", 403
 
     if 'CSRF-Token' not in ''.join(request.cookies.keys()) and randint(1, 6) == 1:
-        return "<html><body><p>Captcha challenge: are you a bot?</p></body></html>"
+        return "<html><body><p>Captcha challenge: are you a bot?</p></body></html>", 200
 
     try:
         company_name = companies[pid]
     except KeyError:
         return "<html><body><p>Company not found</p></body></html>", 404
     else:
-        return f'<html><body><p id="company-id">{pid}</p><p id="company-name">{company_name}</p></body></html>'
+        if randint(1, 10) == 1:
+            return "server down", 503
+        else:
+            return f'<html><body><p id="company-id">{pid}</p><p id="company-name">{company_name}</p></body></html>', 200
