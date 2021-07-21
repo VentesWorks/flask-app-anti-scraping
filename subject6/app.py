@@ -28,8 +28,6 @@ def listing():
 @app.route("/page/<pid>")
 @limiter.limit("10/minute;100/hour")
 def page_detail(pid):
-    print(request.headers)
-
     user_agent = request.headers.get('User-Agent', '')
 
     if "Accept-Language" not in request.headers or "Chrome" not in user_agent and "Firefox" not in user_agent:
